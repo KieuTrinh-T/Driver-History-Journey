@@ -15,7 +15,7 @@ code {
     margin: auto
 }
 
-.sidebar {
+.map-canvas {
     background-color: #FE5F00;
     color: #fff;
     padding: 6px 12px;
@@ -52,4 +52,26 @@ code {
     background-color: #fff;
     color: #FE5F00;
     font-weight: bold;
+}
+
+.supplier-info button:hover {
+    transform: scale(1.1);
+}
+
+.spinner-border {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    color: #FE5F00;
+    background-color: #ffffff60;
+}
+
+.sr-only {
+    font-size: 2rem;
 }

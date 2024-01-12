@@ -9,7 +9,7 @@ function MapGL() {
     const [lat, setLat] = useState(10.7977039);
     const [zoom, setZoom] = useState(12);
     const [supplierId, setSupplierId] = useState(process.env.REACT_APP_SUPPLIER_ID);
-    const [supplierToken, setSupplierToken] = useState(process.env.REACT_APP_SUPPLIER_TOKEN);
+    // const [supplierToken, setSupplierToken] = useState(process.env.REACT_APP_SUPPLIER_TOKEN);
     const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
     const [run, setRun] = useState(0);
     const [spinner, setSpinner] = useState(false);
@@ -35,7 +35,7 @@ function MapGL() {
                 mode: 'cors',
                 credentials: 'include',
                 headers: {
-                    'Authorization': 'Bearer ' + supplierToken,
+                    'Authorization': 'Bearer ' + process.env.REACT_APP_SUPPLIER_TOKEN,
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': 'https://apistg.ahamove.com',
                 }
@@ -166,7 +166,7 @@ function MapGL() {
     }, [run])
 
     function verifyInput() {
-        if (supplierId === '' || supplierToken === '' || date === '')
+        if (supplierId === '' || date === '')
             return false;
         return true;
     }
@@ -184,10 +184,6 @@ function MapGL() {
                     placeholder="Supplier ID"
                     onChange={e => setSupplierId(e.target.value)}
                     value={supplierId} />
-                <input type="text"
-                    placeholder="Supplier Token"
-                    onChange={e => setSupplierToken(e.target.value)}
-                    value={supplierToken} />
                 <input type='date'
                     placeholder='Date'
                     onChange={e => setDate(e.target.value)}

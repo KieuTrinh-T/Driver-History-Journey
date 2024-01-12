@@ -70,6 +70,10 @@ function MapGL() {
             pinRouteGeojson.forEach(element => {
                 pinRoute.push(element.coordinates);
             });
+            if (pinRoute.length === 0) {
+                alert('No data found');
+                return;
+            }
             //remove old marker
             if (map.current.getLayer(mapID + (run - 1))) {
                 map.current.removeLayer(mapID + (run - 1));
@@ -90,7 +94,7 @@ function MapGL() {
                 scale: 0.8,
                 draggable: false,
                 pitchAlignment: 'auto',
-                rotationAlignment: 'auto'
+                rotationAlignment: 'map'
             })
 
             map.current.addSource(mapID + run, {
@@ -137,7 +141,7 @@ function MapGL() {
                 marker.addTo(map.current);
                 map.current.flyTo({
                     center: lngLat,
-                    speed: 0.2
+                    speed: 0.5
                 });
                 map.current.setPaintProperty(mapID + run, 'line-gradient', [
                     'step',

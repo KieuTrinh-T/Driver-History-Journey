@@ -89,6 +89,17 @@ input::-webkit-clear-button {
     transform: scale(1.1);
 }
 
+.supplier-info button:disabled,
+.supplier-info button[disabled] {
+    background-color: #ffffff60;
+    color: #ffffff60;
+}
+
+.supplier-info button:disabled:hover,
+.supplier-info button[disabled]:hover {
+    transform: scale(1);
+}
+
 .spinner-border {
     width: 100vw;
     height: 100vh;

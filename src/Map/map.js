@@ -51,6 +51,9 @@ function MapGL() {
         }
 
         async function fetchPinRouteGeojson() {
+            if (run > 0) {
+                document.getElementById('run-btn').disabled = true;
+            }
             var options = {
                 method: 'GET',
                 mode: 'cors',
@@ -146,6 +149,12 @@ function MapGL() {
                     'line-join': 'round'
                 }
             });
+
+            await map.current.flyTo({
+                center: pinRoute[0],
+                speed: 1,
+                zoom: 12,
+            });
             await map.current.once('idle');
 
             const path = turf.lineString(pinRoute);
@@ -154,6 +163,7 @@ function MapGL() {
                 if (!start) start = time;
                 const animationPhase = (time - start) / animationDuration;
                 if (animationPhase > 1) {
+                    document.getElementById('run-btn').disabled = false; // Enable the button
                     return;
                 }
                 const alongPath = turf.along(path, pathDistance * animationPhase).geometry.coordinates;
@@ -161,16 +171,18 @@ function MapGL() {
                     lng: alongPath[0],
                     lat: alongPath[1]
                 };
+                map.current.flyTo({
+                    center: lngLat,
+                    speed: 1,
+                    zoom: 12,
+                });
 
                 marker.setLngLat(lngLat);
                 // Calculate bearing (angle) between previous point and current point
                 const bearing = calculateBearing(previousPoint, alongPath);
                 marker.setRotation(bearing);
                 marker.addTo(map.current);
-                map.current.flyTo({
-                    center: lngLat,
-                    speed: 0.5
-                });
+
                 map.current.setPaintProperty(mapID + run, 'line-gradient', [
                     'step',
                     ['line-progress'],
@@ -180,9 +192,10 @@ function MapGL() {
                 ]);
                 previousPoint = alongPath; // Update previous point
                 requestAnimationFrame(animateMarker);
-
             }
-            requestAnimationFrame(animateMarker);
+            await requestAnimationFrame(animateMarker);
+
+
         }
         displayMap();
         if (run > 0) {
@@ -208,7 +221,7 @@ function MapGL() {
                     <span className="sr-only">Loading...</span>
                 </div>
             )}
-            <div className='supplier-info' >
+            <div className='supplier-info'>
                 <input type="text"
                     placeholder="Supplier ID"
                     onChange={e => setSupplierId(e.target.value)}
@@ -220,10 +233,12 @@ function MapGL() {
                     min={minDate.toISOString().slice(0, 10)}
                     max={new Date().toISOString().slice(0, 10)}
                 />
-                <button onClick={() => {
-                    setRun(run + 1);
-                    setSpinner(true);
-                }}>Run</button>
+                <button
+                    id='run-btn'
+                    onClick={() => {
+                        setRun(run + 1);
+                        setSpinner(true);
+                    }}>Run</button>
 
             </div>
             <div className="map-canvas">

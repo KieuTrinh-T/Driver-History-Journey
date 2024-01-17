@@ -80,6 +80,8 @@ function MapGL() {
                     }
                     else {
                         alert('Error at fetching data: ' + response.status);
+                        document.getElementById('run-btn').disabled = false; // Enable the button
+
                         return;
                     }
                 }),
@@ -89,6 +91,8 @@ function MapGL() {
             setSpinner(false)
 
             if (!pinRouteGeojson) {
+                alert('No data found');
+                document.getElementById('run-btn').disabled = false; // Enable the button
                 return;
             }
             var pinRoute = [];
@@ -99,6 +103,8 @@ function MapGL() {
 
             if (pinRoute.length === 0) {
                 alert('No data found');
+                document.getElementById('run-btn').disabled = false; // Enable the button
+
                 return;
             }
             //remove old marker

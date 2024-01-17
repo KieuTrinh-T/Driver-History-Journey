@@ -11,10 +11,13 @@ function MapGL() {
     const [supplierId, setSupplierId] = useState(process.env.REACT_APP_SUPPLIER_ID);
     // const [supplierToken, setSupplierToken] = useState(process.env.REACT_APP_SUPPLIER_TOKEN);
     const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() - 7);
     const [run, setRun] = useState(0);
     const [spinner, setSpinner] = useState(false);
     let start;
     const mapID = 'line'
+
 
     const animationDuration = 30000;
     useEffect(() => {
@@ -27,6 +30,19 @@ function MapGL() {
                 zoom: zoom
             });
 
+        }
+        function calculateBearing(point1, point2) {
+            const lat1 = point1[1] * Math.PI / 180;
+            const lng1 = point1[0] * Math.PI / 180;
+            const lat2 = point2[1] * Math.PI / 180;
+            const lng2 = point2[0] * Math.PI / 180;
+            const y = Math.sin(lng2 - lng1) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) -
+                Math.sin(lat1) * Math.cos(lat2) * Math.cos(lng2 - lng1);
+
+            let brng = Math.atan2(y, x) * 180 / Math.PI;
+
+            return brng;
         }
 
         async function fetchPinRouteGeojson() {
@@ -41,6 +57,7 @@ function MapGL() {
                 }
             };
             var dateUnix = new Date(date);
+            console.log(date);
             dateUnix.setHours(0, 0, 0, 0);
             var fromTime = Math.floor(dateUnix.getTime() / 1000);
             dateUnix.setHours(23, 59, 59, 999);
@@ -96,6 +113,7 @@ function MapGL() {
                 pitchAlignment: 'auto',
                 rotationAlignment: 'map'
             })
+            let previousPoint = pinRoute[0];
 
             map.current.addSource(mapID + run, {
                 type: 'geojson',
@@ -106,7 +124,7 @@ function MapGL() {
                         'type': 'LineString',
                         'coordinates': pinRoute
                     }
-                }
+                },
             });
             map.current.addLayer({
                 type: 'line',
@@ -136,8 +154,11 @@ function MapGL() {
                     lng: alongPath[0],
                     lat: alongPath[1]
                 };
-                marker.setLngLat(lngLat);
 
+                marker.setLngLat(lngLat);
+                // Calculate bearing (angle) between previous point and current point
+                const bearing = calculateBearing(previousPoint, alongPath);
+                marker.setRotation(bearing);
                 marker.addTo(map.current);
                 map.current.flyTo({
                     center: lngLat,
@@ -150,6 +171,7 @@ function MapGL() {
                     animationPhase,
                     'rgba(255, 0, 0, 0)'
                 ]);
+                previousPoint = alongPath; // Update previous point
                 requestAnimationFrame(animateMarker);
 
             }
@@ -187,7 +209,10 @@ function MapGL() {
                 <input type='date'
                     placeholder='Date'
                     onChange={e => setDate(e.target.value)}
-                    value={date} />
+                    value={date}
+                    min={minDate.toISOString().slice(0, 10)}
+                    max={new Date().toISOString().slice(0, 10)}
+                />
                 <button onClick={() => {
                     setRun(run + 1);
                     setSpinner(true);

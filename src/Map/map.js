@@ -29,6 +29,11 @@ function MapGL() {
                 center: [lng, lat],
                 zoom: zoom
             });
+            map.current.on('move', () => {
+                setLng(map.current.getCenter().lng.toFixed(4));
+                setLat(map.current.getCenter().lat.toFixed(4));
+                setZoom(map.current.getZoom().toFixed(2));
+            });
 
         }
         function calculateBearing(point1, point2) {
@@ -87,6 +92,8 @@ function MapGL() {
             pinRouteGeojson.forEach(element => {
                 pinRoute.push(element.coordinates);
             });
+
+
             if (pinRoute.length === 0) {
                 alert('No data found');
                 return;
@@ -216,11 +223,14 @@ function MapGL() {
                 <button onClick={() => {
                     setRun(run + 1);
                     setSpinner(true);
-
                 }}>Run</button>
 
             </div>
-            <div className="map-canvas">Longitude: {lng} | Latitude: {lat} | Zoom: {zoom} </div>
+            <div className="map-canvas">
+                <p>Longitude: {lng}</p>
+                <p>Latitude: {lat}</p>
+                <p>Zoom: {zoom}</p>
+            </div>
             <div ref={mapContainer} className="map-container" > </div>
         </>
     );

@@ -19,7 +19,6 @@ function MapGL() {
     const mapID = 'line'
 
 
-    const animationDuration = 30000;
     useEffect(() => {
         async function displayMap() {
             if (map.current) return;
@@ -65,7 +64,6 @@ function MapGL() {
                 }
             };
             var dateUnix = new Date(date);
-            console.log(date);
             dateUnix.setHours(0, 0, 0, 0);
             var fromTime = Math.floor(dateUnix.getTime() / 1000);
             dateUnix.setHours(23, 59, 59, 999);
@@ -165,6 +163,8 @@ function MapGL() {
 
             const path = turf.lineString(pinRoute);
             const pathDistance = turf.lineDistance(path);
+            let animationDuration = pinRoute.length * 400;
+            console.log(animationDuration);
             function animateMarker(time) {
                 if (!start) start = time;
                 const animationPhase = (time - start) / animationDuration;

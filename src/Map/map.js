@@ -236,7 +236,7 @@ function MapGL() {
                     placeholder='Date'
                     onChange={e => setDate(e.target.value)}
                     value={date}
-                    min={minDate.toISOString().slice(0, 10)}
+                    // min={minDate.toISOString().slice(0, 10)}
                     max={new Date().toISOString().slice(0, 10)}
                 />
                 <button
